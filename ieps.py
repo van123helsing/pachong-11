@@ -6,7 +6,9 @@ import threading
 from urllib import parse
 from urllib import robotparser
 from urllib.request import urlopen
+from urllib.request import urlretrieve
 from bs4 import BeautifulSoup
+import requests
 import re
 import time
 import db
@@ -15,10 +17,12 @@ profile = webdriver.FirefoxProfile()
 AGENT_NAME = 'fri-ieps-11'
 profile.set_preference("general.useragent.override", AGENT_NAME)
 DISALLOWED = []
-frontier = ["https://gov.si",
+
+frontier = ["https://evem.gov.si", "https://gov.si",
             "https://evem.gov.si",
             "https://e-uprava.gov.si",
             "https://e-prostor.gov.si"]
+
 
 lock = threading.Lock()
 
@@ -48,6 +52,18 @@ def crawler(path):
                 frontier.append(elem.get_attribute("href"))
 
         print(frontier)
+
+        imgs = driver.find_elements_by_xpath("//img[@src]")
+        for img in imgs:
+            img_url = img.get_attribute("src")
+            if "http" in img_url:
+                img_name = img_url.split('/')[-1]
+                r = requests.get(img_url, stream=True)  # downloading
+                with open('./img/%s.png' % img_name, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=128):
+                        f.write(chunk)
+                print('Saved %s' % img_name)
+
 
     except TimeoutException:
         driver.quit()
