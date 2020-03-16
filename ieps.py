@@ -1,25 +1,21 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import concurrent.futures
 import threading
-import psycopg2
 from urllib import parse
 from urllib import robotparser
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import re
 import time
+import db
 
 profile = webdriver.FirefoxProfile()
-AGENT_NAME = 'frie-ieps-11'
+AGENT_NAME = 'fri-ieps-11'
 profile.set_preference("general.useragent.override", AGENT_NAME)
 DISALLOWED = []
-frontier = ["https://evem.gov.si", "https://gov.si",
+frontier = ["https://gov.si",
             "https://evem.gov.si",
             "https://e-uprava.gov.si",
             "https://e-prostor.gov.si"]
@@ -28,13 +24,18 @@ lock = threading.Lock()
 
 options = Options()
 options.headless = True
-driver = webdriver.Firefox(profile,options=options)
+options.add_argument("user-agent=" + AGENT_NAME)
+driver = webdriver.Firefox(profile, options=options)
 
-def validUrl(url):
+dbConn = db.DataBase()
+
+
+def valid_url(url):
     for i in DISALLOWED:
-        if "gov.si"+i in url:
+        if "gov.si" + i in url:
             return False
-    return not url in frontier and "gov.si" in url
+    return url not in frontier and "gov.si" in url
+
 
 def crawler(path):
     try:
@@ -43,7 +44,7 @@ def crawler(path):
         time.sleep(2)
         elems = driver.find_elements_by_xpath("//a[@href]")
         for elem in elems:
-            if validUrl(elem.get_attribute("href")):
+            if valid_url(elem.get_attribute("href")):
                 frontier.append(elem.get_attribute("href"))
 
         print(frontier)
@@ -77,7 +78,7 @@ def nit(counter_id, increases):
     # conn.close()
 
 
-def readRobotTxt():
+def read_robot_txt():
     parser = robotparser.RobotFileParser()
     parser.set_url(parse.urljoin("https://gov.si/", 'robots.txt'))
     parser.read()
@@ -88,9 +89,9 @@ def readRobotTxt():
 def main():
     while True:
         val = input("Vnesite število željenih niti (1-10): ")
-        if int(val) <= 10 and int(val) >= 1:
+        if val.isdigit() and 10 >= int(val) >= 1:
             break
-    readRobotTxt()
+    read_robot_txt()
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         for i in range(int(val)):
