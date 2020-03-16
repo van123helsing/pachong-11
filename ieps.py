@@ -7,14 +7,20 @@ from urllib import parse
 from urllib import robotparser
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+import requests
 import re
 import time
 import db
+import models
 
 profile = webdriver.FirefoxProfile()
 AGENT_NAME = 'fri-ieps-11'
 profile.set_preference("general.useragent.override", AGENT_NAME)
 DISALLOWED = []
+root = ["https://gov.si",
+        "https://evem.gov.si",
+        "https://e-uprava.gov.si",
+        "https://e-prostor.gov.si"]
 frontier = ["https://gov.si",
             "https://evem.gov.si",
             "https://e-uprava.gov.si",
@@ -78,12 +84,43 @@ def nit(counter_id, increases):
     # conn.close()
 
 
-def read_robot_txt():
-    parser = robotparser.RobotFileParser()
-    parser.set_url(parse.urljoin("https://gov.si/", 'robots.txt'))
-    parser.read()
-    for i in parser.default_entry.rulelines:
-        DISALLOWED.append(i.path)
+def read_site(site):
+    # save current site to database
+    robots = ""
+    try:
+        rp = robotparser.RobotFileParser()
+        rp.set_url(parse.urljoin(site, '/robots.txt'))
+        rp.read()
+
+        # add all disallowed pages to an array
+        for i in rp.default_entry.rulelines:
+            DISALLOWED.append(parse.urljoin(site, i.path))
+
+        robots = rp.__str__()
+    except:
+        print("robots.txt does not exist!")
+        pass
+
+    sitemap = ""
+    try:
+        r = requests.get(parse.urljoin(site, '/sitemap.xml'))
+        xml = r.text
+
+        # add all urls from sitemap to frontier
+        soup = BeautifulSoup(xml, features="html.parser")
+        sitemap_tags = soup.find_all("sitemap")
+        if len(sitemap_tags) > 0:
+            sitemap = xml
+        for s in sitemap_tags:
+            if valid_url(s.findNext("loc").text):
+                frontier.append(s.findNext("loc").text)  # s.findNext("lastmod").text to get last modified date
+    except:
+        print("sitemap.xml does not exist!")
+        pass
+
+    dbConn.insert_site(models.Site(site, robots, sitemap))
+    print("Inserted data for site " + site)
+    time.sleep(2)
 
 
 def main():
@@ -91,7 +128,10 @@ def main():
         val = input("Vnesite število željenih niti (1-10): ")
         if val.isdigit() and 10 >= int(val) >= 1:
             break
-    read_robot_txt()
+
+    # check robots.txt file for all root domains
+    for site in root:
+        read_site(site)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         for i in range(int(val)):
