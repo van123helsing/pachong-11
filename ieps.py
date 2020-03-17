@@ -5,6 +5,8 @@ import concurrent.futures
 import threading
 from urllib import parse
 from urllib import robotparser
+from urllib.parse import urldefrag, urljoin, urlsplit
+from html import unescape
 from urllib.request import urlopen
 from urllib.request import urlretrieve
 from bs4 import BeautifulSoup
@@ -13,6 +15,10 @@ import re
 import time
 import db
 import models
+import sys
+import hashlib
+import enums
+from datetime import datetime
 
 profile = webdriver.FirefoxProfile()
 AGENT_NAME = 'fri-ieps-11'
@@ -27,74 +33,157 @@ frontier = ["https://gov.si",
             "https://e-uprava.gov.si",
             "https://e-prostor.gov.si"]
 
+history = set()
+
 lock = threading.Lock()
 
 options = Options()
 options.headless = True
 options.add_argument("user-agent=" + AGENT_NAME)
 driver = webdriver.Firefox(profile, options=options)
-
 dbConn = db.DataBase()
 
 
+def clear_www(url):
+    if url.startswith('www.'):
+        url = re.sub(r'www.', '', url)
+    return url
+
+
+def clean_link(url):
+    if not url.startswith('http'):
+        base_url = urljoin(driver.current_url, '.')
+        url = base_url[:-1] + url
+
+    url, frag = urldefrag(url)
+
+    re.sub(":80/", "", url)
+
+    # re.sub("index\.html$", "", url)
+
+    url = unescape(url)
+
+    url = url.replace(" ", "%20")
+
+    sep = '/#'
+    url = url.split(sep, 1)[0]
+
+    return url
+
+
 def valid_url(url):
+    # da preprecimo pasti
+    if len(url) > 200:
+        return False
+    # ostale kontrole pravilnega url-ja
     for i in DISALLOWED:
         if "gov.si" + i in url:
             return False
-    return url not in frontier and "gov.si" in url
+    return url not in frontier and url not in history and "gov.si" in url
 
 
 def crawler(path):
     try:
+        # nastavimo prazne objekte
+        page = models.Page
+        page_data = models.PageData
+
         driver.get(path)
+        r = requests.head(driver.current_url)
+        header = r.headers.get('content-type').split(";")[0]
 
         time.sleep(2)
-        elems = driver.find_elements_by_xpath("//a[@href]")
-        for elem in elems:
-            if valid_url(elem.get_attribute("href")):
-                frontier.append(elem.get_attribute("href"))
+
+        # pridobimo vsebino strani
+        data = driver.page_source
+        # hashamo za preverjanje ce smo ze obiskali isto stran z drugim url
+        data_hash = hashlib.md5(data.encode())
+        page.hash = data_hash
+        h = dbConn.check_if_hash_exists(data_hash.digest())
+        # http status koda
+        page.http_status_code = r.status_code
+        # cas dostopa
+        page.accessed_time = datetime.now()
+        # url
+        page.url = driver.current_url
+
+        # ali site se ni dodan
+        l = dbConn.check_if_domain_exists(clear_www(urlsplit(driver.current_url).netloc))
+        if l is None:
+            read_site(driver.current_url)
+
+        # hash ze obstaja v bazi
+        if h is not None:
+            # TODO DUPLICATE - dodaj page
+            page.page_type_code = enums.PageType.DUPLICATE
+            page.html_content = ''
+            return
+        # hash ne obstaja v bazi
+        else:
+            if header == 'text/html':
+                page.page_type_code = enums.PageType.HTML
+                page.html_content = ''
+            else:
+                page.page_type_code = enums.PageType.BINARY
+                page.html_content = data
+                if header == enums.MimeType.PDF:
+                    page_data.data_type_code = enums.DataType.PDF
+                elif header == enums.MimeType.DOC:
+                    page_data.data_type_code = enums.DataType.DOC
+                elif header == enums.MimeType.DOCX:
+                    page_data.data_type_code = enums.DataType.DOCX
+                elif header == enums.MimeType.PPT:
+                    page_data.data_type_code = enums.DataType.PPT
+                elif header == enums.MimeType.PPTX:
+                    page_data.data_type_code = enums.DataType.PPTX
+
+        # TODO insert: page, page_data_, image, link
+
+        add_links()
 
         print(frontier)
 
-        imgs = driver.find_elements_by_xpath("//img[@src]")
-        for img in imgs:
-            img_url = img.get_attribute("src")
-            if "http" in img_url:
-                img_name = img_url.split('/')[-1]
-                r = requests.get(img_url, stream=True)  # downloading
-                with open('./img/%s.png' % img_name, 'wb') as f:
-                    for chunk in r.iter_content(chunk_size=128):
-                        f.write(chunk)
-                print('Saved %s' % img_name)
-
+        add_imgs()
 
     except TimeoutException:
-        driver.quit()
-        print('MOVIE NOT YET AVAILABLE!')
+        print('STRAN SE NI NALOZILA V ZAHTEVANEM CASU')
         pass
     except:
-        driver.quit()
-        raise
+        print("Unexpected error:", sys.exc_info()[0])
+        pass
 
 
-def nit(counter_id, increases):
-    # conn = psycopg2.connect(host="localhost", user="user", password="SecretPassword")
-    # conn.autocommit = True
+def add_imgs():
+    imgs = driver.find_elements_by_xpath("//img[@src]")
+    for img in imgs:
+        img_url = img.get_attribute("src")
+        if "http" in img_url:
+            img_name = img_url.split('/')[-1]
+            r = requests.get(img_url, stream=True)
+            # TODO ce sem prav prebral navodila ne rabimo shranjevat bytov-> sam metadata slike
+            # with open('./img/%s.png' % img_name, 'wb') as f:
+            #     for chunk in r.iter_content(chunk_size=128):
+            #         f.write(chunk)
+            print('Saved %s' % img_name)
 
+
+def add_links():
+    elems = driver.find_elements_by_xpath("//a[@href]")
+    for elem in elems:
+        url = clean_link(elem.get_attribute("href"))
+        if valid_url(url):
+            frontier.append(elem.get_attribute("href"))
+
+
+def nit(nit_id):
     while frontier:
         with lock:
-            crawler(frontier.__getitem__(0))
+            addres = frontier.__getitem__(0)
+            print("Nit " + str(nit_id) + ": STARTED: " + addres)
+            crawler(addres)
+            print("Nit " + str(nit_id) + ": FINISHED:  " + addres)
+            history.add(addres)
             frontier.pop(0)
-            # print("id: " + counter_id, end=" ")
-            # print(counter_id)
-            # cur = conn.cursor()
-            # cur.execute("SELECT value FROM showcase.counters WHERE counter_id = %s", \
-            #             (counter_id,))
-            # value = cur.fetchone()[0]
-            # cur.execute("UPDATE showcase.counters SET value = %s WHERE counter_id = %s", \
-            #             (value + 1, counter_id))
-            # cur.close()
-    # conn.close()
 
 
 def read_site(site):
@@ -131,7 +220,7 @@ def read_site(site):
         print("sitemap.xml does not exist!")
         pass
 
-    dbConn.insert_site(models.Site(site, robots, sitemap))
+    dbConn.insert_site(models.Site(urlsplit(site).netloc, robots, sitemap))
     print("Inserted data for site " + site)
     time.sleep(2)
 
@@ -143,6 +232,7 @@ def main():
             break
 
     dbConn.empty_database()
+    print("Baza je izpraznjena.")
 
     # check robots.txt file for all root domains
     for site in root:
@@ -150,7 +240,7 @@ def main():
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         for i in range(int(val)):
-            executor.submit(nit, i, 1)
+            executor.submit(nit, i)
 
 
 if __name__ == "__main__":
