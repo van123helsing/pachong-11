@@ -142,6 +142,8 @@ def main():
         if val.isdigit() and 10 >= int(val) >= 1:
             break
 
+    dbConn.empty_database()
+
     # check robots.txt file for all root domains
     for site in root:
         read_site(site)

@@ -49,3 +49,13 @@ class DataBase:
                     (data_object.from_page, data_object.to_page))
         cur.close()
         return True
+
+    def empty_database(self):
+        cur = self.conn.cursor()
+        cur.execute("DELETE FROM crawldb.site")
+        cur.execute("DELETE FROM crawldb.page")
+        cur.execute("DELETE FROM crawldb.image")
+        cur.execute("DELETE FROM crawldb.page_data")
+        cur.execute("DELETE FROM crawldb.link")
+        cur.close()
+        return True
