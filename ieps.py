@@ -98,7 +98,7 @@ def crawler(path):
         data = driver.page_source
         # hashamo za preverjanje ce smo ze obiskali isto stran z drugim url
         data_hash = hashlib.md5(data.encode())
-        page.hash = data_hash
+        page.hash = data_hash.digest()
         h = dbConn.check_if_hash_exists(data_hash.digest())
         # http status koda
         page.http_status_code = r.status_code
