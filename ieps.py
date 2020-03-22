@@ -19,6 +19,8 @@ import sys
 import hashlib
 import enums
 from datetime import datetime
+from datetime import timedelta
+import socket
 
 profile = webdriver.FirefoxProfile()
 AGENT_NAME = 'fri-ieps-11'
@@ -42,6 +44,26 @@ options.headless = True
 options.add_argument("user-agent=" + AGENT_NAME)
 driver = webdriver.Firefox(profile, options=options)
 dbConn = db.DataBase()
+
+timeouts = dict()
+
+def is_timeout(ip):
+    # izbrišemo IP iz seznama ce je potekel njegov timeout
+    keys = list(timeouts.keys())
+    values = list(timeouts.values())
+    for i in range(len(keys)):
+        if keys[i] == ip and datetime.now() > (values[i] - timedelta(milliseconds=300)):
+            print("Deleting timeout for: ", ip)
+            del timeouts[keys[i]]
+    # ce IP-ja ni v seznamu, ne vrnemo timeouta
+    if ip not in timeouts:
+        return 0
+    # IP je v seznamu, nastavimo timeout
+    else:
+        time = timeouts.get(ip)
+        now = datetime.now()
+        print("Waintin to send request to " + str(ip) + " for " + str((time-now).seconds) + " seconds.")
+        return (time-now).seconds
 
 
 def clear_www(url):
@@ -88,14 +110,18 @@ def crawler(path):
         page = models.Page
         page_data = models.PageData
 
+        ip = socket.gethostbyname(urlsplit(path).netloc)
+        time.sleep(is_timeout(ip))
         driver.get(path)
         r = requests.head(driver.current_url)
         header = r.headers.get('content-type').split(";")[0]
+        timeouts[ip] = datetime.now() + timedelta(seconds=5)
 
         time.sleep(2)
 
         # pridobimo vsebino strani
         data = driver.page_source
+
         # hashamo za preverjanje ce smo ze obiskali isto stran z drugim url
         data_hash = hashlib.md5(data.encode())
         page.hash = data_hash.digest()
@@ -146,10 +172,10 @@ def crawler(path):
         add_imgs()
 
     except TimeoutException:
-        print('STRAN SE NI NALOZILA V ZAHTEVANEM CASU')
+        print('Webpage did not load in within the time limit.')
         pass
     except:
-        print("Unexpected error:", sys.exc_info()[0])
+        print("Unexpected error:", str(sys.exc_info()))
         pass
 
 
@@ -179,11 +205,12 @@ def nit(nit_id):
     while frontier:
         with lock:
             addres = frontier.__getitem__(0)
-            print("Nit " + str(nit_id) + ": STARTED: " + addres)
+            print("Thread " + str(nit_id) + ": STARTED: " + addres)
             crawler(addres)
-            print("Nit " + str(nit_id) + ": FINISHED:  " + addres)
+            print("Thread " + str(nit_id) + ": FINISHED:  " + addres)
             history.add(addres)
             frontier.pop(0)
+        time.sleep(1)
 
 
 def read_site(site):
@@ -227,12 +254,12 @@ def read_site(site):
 
 def main():
     while True:
-        val = input("Vnesite število željenih niti (1-10): ")
+        val = input("Enter the number of desired threads (1-10): ")
         if val.isdigit() and 10 >= int(val) >= 1:
             break
 
     dbConn.empty_database()
-    print("Baza je izpraznjena.")
+    print("Database is cleared.")
 
     # check robots.txt file for all root domains
     for site in root:
