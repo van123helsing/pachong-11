@@ -14,6 +14,7 @@ class DataType(Enum):
     DOCX = 'DOCX'
     PPT = 'PPT'
     PPTX = 'PPTX'
+    OTHER = 'OTHER'
 
 
 class MimeType(Enum):

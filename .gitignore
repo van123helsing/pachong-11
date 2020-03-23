@@ -78,3 +78,5 @@ venv/
 
 *.log
 __pycache__/
+
+img/

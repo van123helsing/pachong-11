@@ -14,25 +14,30 @@ class DataBase:
 
     def insert_site(self, data_object):
         cur = self.conn.cursor()
-        cur.execute("INSERT INTO crawldb.site (domain, robots_content, sitemap_content) VALUES (%s, %s, %s)",
-                    (data_object.domain, data_object.robots_content, data_object.sitemap_content))
+        cur.execute(
+            "INSERT INTO crawldb.site (domain, robots_content, sitemap_content) VALUES (%s, %s, %s) RETURNING id",
+            (data_object.domain, data_object.robots_content, data_object.sitemap_content))
+        site_id = cur.fetchone()[0]
         cur.close()
-        return True
+        return site_id
 
     def insert_page(self, data_object):
         cur = self.conn.cursor()
-        cur.execute("INSERT INTO crawldb.page (site_id,page_type_code,url,html_content,http_status_code,accessed_time,hash)"
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                    (data_object.site_id, data_object.page_type_code, data_object.url,
-                     data_object.html_content, data_object.html_status_code, data_object.accessed_time, data_object.hash))
+        cur.execute(
+            "INSERT INTO crawldb.page (site_id,page_type_code,url,html_content,http_status_code,accessed_time,hash)"
+            "VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
+            (data_object.site_id, data_object.page_type_code, data_object.url,
+             data_object.html_content, data_object.http_status_code, data_object.accessed_time, data_object.hash))
+        page_id = cur.fetchone()[0]
         cur.close()
-        return True
+        return page_id
 
     def insert_image(self, data_object):
         cur = self.conn.cursor()
-        cur.execute("INSERT INTO crawldb.image (page_id,filename,content_type,data,accessed_time) VALUES (%s, %s, %s, %s, %s)",
-                    (data_object.page_id, data_object.filename, data_object.content_type,
-                     data_object.data, data_object.accessed_time))
+        cur.execute(
+            "INSERT INTO crawldb.image (page_id,filename,content_type,data,accessed_time) VALUES (%s, %s, %s, %s, %s)",
+            (data_object.page_id, data_object.filename, data_object.content_type,
+             data_object.data, data_object.accessed_time))
         cur.close()
         return True
 

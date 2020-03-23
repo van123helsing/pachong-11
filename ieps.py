@@ -26,10 +26,6 @@ profile = webdriver.FirefoxProfile()
 AGENT_NAME = 'fri-ieps-11'
 profile.set_preference("general.useragent.override", AGENT_NAME)
 DISALLOWED = []
-root = ["https://gov.si",
-        "https://evem.gov.si",
-        "https://e-uprava.gov.si",
-        "https://e-prostor.gov.si"]
 frontier = ["https://gov.si",
             "https://evem.gov.si",
             "https://e-uprava.gov.si",
@@ -47,6 +43,7 @@ dbConn = db.DataBase()
 
 timeouts = dict()
 
+
 def is_timeout(ip):
     # izbrišemo IP iz seznama ce je potekel njegov timeout
     keys = list(timeouts.keys())
@@ -62,8 +59,8 @@ def is_timeout(ip):
     else:
         time = timeouts.get(ip)
         now = datetime.now()
-        print("Waintin to send request to " + str(ip) + " for " + str((time-now).seconds) + " seconds.")
-        return (time-now).seconds
+        print("Wainting to send request to " + str(ip) + " for " + str((time - now).seconds) + " seconds.")
+        return (time - now).seconds
 
 
 def clear_www(url):
@@ -108,7 +105,7 @@ def crawler(path):
     try:
         # nastavimo prazne objekte
         page = models.Page
-        page_data = models.PageData
+        page_data = None
 
         ip = socket.gethostbyname(urlsplit(path).netloc)
         time.sleep(is_timeout(ip))
@@ -117,7 +114,7 @@ def crawler(path):
         header = r.headers.get('content-type').split(";")[0]
         timeouts[ip] = datetime.now() + timedelta(seconds=5)
 
-        time.sleep(2)    #za javscript, da se nalozi
+        time.sleep(2)  # za javscript, da se nalozi
 
         # pridobimo vsebino strani
         data = driver.page_source
@@ -134,40 +131,42 @@ def crawler(path):
         page.url = driver.current_url
 
         # ali site se ni dodan
-        l = dbConn.check_if_domain_exists(clear_www(urlsplit(driver.current_url).netloc))
-
-        if l is None:
-            read_site(driver.current_url)
-
-        #TODO iz baze preberi site id
+        page.site_id = dbConn.check_if_domain_exists(clear_www(urlsplit(driver.current_url).netloc))
+        if page.site_id is None:
+            page.site_id = read_site(driver.current_url)
 
         # hash ze obstaja v bazi
         if h is not None:
             # TODO DUPLICATE - dodaj page, poporavi talebo link
-            page.page_type_code = enums.PageType.DUPLICATE
+            page.page_type_code = enums.PageType.DUPLICATE.value
             page.html_content = ''
             return
         # hash ne obstaja v bazi
         else:
             if header == 'text/html':
-                page.page_type_code = enums.PageType.HTML
+                page.page_type_code = enums.PageType.HTML.value
                 page.html_content = data
             else:
-
-                page.page_type_code = enums.PageType.BINARY
+                page.page_type_code = enums.PageType.BINARY.value
                 page.html_content = ''
+                page_data = models.PageData
+                page_data.data_type_code = 'OTHER'
+                page_data.data = ''
                 if header == enums.MimeType.PDF:
-                    page_data.data_type_code = enums.DataType.PDF
+                    page_data.data_type_code = enums.DataType.PDF.value
                 elif header == enums.MimeType.DOC:
-                    page_data.data_type_code = enums.DataType.DOC
+                    page_data.data_type_code = enums.DataType.DOC.value
                 elif header == enums.MimeType.DOCX:
-                    page_data.data_type_code = enums.DataType.DOCX
+                    page_data.data_type_code = enums.DataType.DOCX.value
                 elif header == enums.MimeType.PPT:
-                    page_data.data_type_code = enums.DataType.PPT
+                    page_data.data_type_code = enums.DataType.PPT.value
                 elif header == enums.MimeType.PPTX:
-                    page_data.data_type_code = enums.DataType.PPTX
+                    page_data.data_type_code = enums.DataType.PPTX.value
 
-        # TODO insert: page, page_data_, image, link
+        page_id = dbConn.insert_page(page)
+        if page_data is not None:
+            page_data.page_id = page_id
+            dbConn.insert_page_data(page_data)
 
         add_links()
 
@@ -208,11 +207,11 @@ def add_links():
 def nit(nit_id):
     while frontier:
         with lock:
-            addres = frontier.__getitem__(0)
-            print("Thread " + str(nit_id) + ": STARTED: " + addres)
-            crawler(addres)
-            print("Thread " + str(nit_id) + ": FINISHED:  " + addres)
-            history.add(addres)
+            address = frontier.__getitem__(0)
+            print("Thread " + str(nit_id) + ": STARTED: " + address)
+            crawler(address)
+            print("Thread " + str(nit_id) + ": FINISHED:  " + address)
+            history.add(address)
             frontier.pop(0)
         time.sleep(1)
 
@@ -229,7 +228,7 @@ def read_site(site):
         for i in rp.default_entry.rulelines:
             DISALLOWED.append(parse.urljoin(site, i.path))
 
-        robots = rp.__str__()
+        robots = str(rp)
     except:
         print("robots.txt does not exist!")
         pass
@@ -251,9 +250,8 @@ def read_site(site):
         print("sitemap.xml does not exist!")
         pass
 
-    dbConn.insert_site(models.Site(urlsplit(site).netloc, robots, sitemap))
     print("Inserted data for site " + site)
-    time.sleep(2)
+    return dbConn.insert_site(models.Site(urlsplit(site).netloc, robots, sitemap))
 
 
 def main():
@@ -263,11 +261,7 @@ def main():
             break
 
     dbConn.empty_database()
-    print("Database is cleared.")
-
-    # check robots.txt file for all root domains
-    for site in root:
-        read_site(site)
+    print("Database cleared.")
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         for i in range(int(val)):
