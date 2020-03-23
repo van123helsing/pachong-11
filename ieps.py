@@ -117,7 +117,7 @@ def crawler(path):
         header = r.headers.get('content-type').split(";")[0]
         timeouts[ip] = datetime.now() + timedelta(seconds=5)
 
-        time.sleep(2)
+        time.sleep(2)    #za javscript, da se nalozi
 
         # pridobimo vsebino strani
         data = driver.page_source
@@ -135,12 +135,15 @@ def crawler(path):
 
         # ali site se ni dodan
         l = dbConn.check_if_domain_exists(clear_www(urlsplit(driver.current_url).netloc))
+
         if l is None:
             read_site(driver.current_url)
 
+        #TODO iz baze preberi site id
+
         # hash ze obstaja v bazi
         if h is not None:
-            # TODO DUPLICATE - dodaj page
+            # TODO DUPLICATE - dodaj page, poporavi talebo link
             page.page_type_code = enums.PageType.DUPLICATE
             page.html_content = ''
             return
@@ -148,10 +151,11 @@ def crawler(path):
         else:
             if header == 'text/html':
                 page.page_type_code = enums.PageType.HTML
-                page.html_content = ''
-            else:
-                page.page_type_code = enums.PageType.BINARY
                 page.html_content = data
+            else:
+
+                page.page_type_code = enums.PageType.BINARY
+                page.html_content = ''
                 if header == enums.MimeType.PDF:
                     page_data.data_type_code = enums.DataType.PDF
                 elif header == enums.MimeType.DOC:
@@ -186,7 +190,7 @@ def add_imgs():
         if "http" in img_url:
             img_name = img_url.split('/')[-1]
             r = requests.get(img_url, stream=True)
-            # TODO ce sem prav prebral navodila ne rabimo shranjevat bytov-> sam metadata slike
+            # TODO ce sem prav prebral navodila ne rabimo shranjevat bytov-> sam metadata slike: decode
             # with open('./img/%s.png' % img_name, 'wb') as f:
             #     for chunk in r.iter_content(chunk_size=128):
             #         f.write(chunk)
