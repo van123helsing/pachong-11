@@ -140,6 +140,7 @@ def crawler(path):
             # TODO DUPLICATE - dodaj page, poporavi talebo link
             page.page_type_code = enums.PageType.DUPLICATE.value
             page.html_content = ''
+            dbConn.insert_link(models.Link(path), h)
             return
         # hash ne obstaja v bazi
         else:
