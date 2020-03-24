@@ -148,7 +148,7 @@ def crawler(path):
                 page.page_type_code = enums.PageType.BINARY.value
                 page.html_content = ''
                 page_data = models.PageData
-                page_data.data_type_code = 'OTHER'
+                page_data.data_type_code = enums.DataType.OTHER.value
                 page_data.data = ''
                 if header == enums.MimeType.PDF:
                     page_data.data_type_code = enums.DataType.PDF.value
@@ -171,7 +171,7 @@ def crawler(path):
 
         add_links()
 
-        print("Size of frontier: ", frontier)
+        print(len(frontier), "urls in frontier.", )
 
         add_imgs(page_id)
 
