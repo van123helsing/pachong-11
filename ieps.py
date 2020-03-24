@@ -26,10 +26,10 @@ profile = webdriver.FirefoxProfile()
 AGENT_NAME = 'fri-ieps-11'
 profile.set_preference("general.useragent.override", AGENT_NAME)
 DISALLOWED = []
-frontier = ["https://gov.si",
-            "https://evem.gov.si",
+frontier = ["https://evem.gov.si",
             "https://e-uprava.gov.si",
-            "https://e-prostor.gov.si"]
+            "https://e-prostor.gov.si",
+            "https://gov.si"]
 
 history = set()
 
@@ -128,7 +128,7 @@ def crawler(path):
         # cas dostopa
         page.accessed_time = datetime.now()
         # url
-        page.url = driver.current_url
+        page.url = path
 
         # ali site se ni dodan
         page.site_id = dbConn.check_if_domain_exists(clear_www(urlsplit(driver.current_url).netloc))
@@ -198,15 +198,15 @@ def add_imgs(page_id):
             image.accessed_time = datetime.now()
             dbConn.insert_image(image)
             #print(image.content_type)
-            print('Saved %s' % img_name)
+            #print('Saved %s' % img_name)
 
 
 def add_links():
     elems = driver.find_elements_by_xpath("//a[@href]")
     for elem in elems:
         url = clean_link(elem.get_attribute("href"))
-        if valid_url(url):
-            frontier.append(elem.get_attribute("href"))
+        if valid_url(elem.get_attribute("href")):
+            frontier.append(url)
 
 
 def nit(nit_id):
@@ -216,9 +216,8 @@ def nit(nit_id):
             print("Thread " + str(nit_id) + ": STARTED: " + address)
             crawler(address)
             print("Thread " + str(nit_id) + ": FINISHED:  " + address)
-            history.add(address)
+            history.add(clean_link(address))
             frontier.pop(0)
-        time.sleep(1)
 
 
 def read_site(site):
