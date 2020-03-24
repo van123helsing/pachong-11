@@ -26,8 +26,8 @@ profile = webdriver.FirefoxProfile()
 AGENT_NAME = 'fri-ieps-11'
 profile.set_preference("general.useragent.override", AGENT_NAME)
 DISALLOWED = []
-frontier = ["https://evem.gov.si",
-            "https://e-uprava.gov.si",
+frontier = ["https://e-uprava.gov.si",
+            "https://evem.gov.si",
             "https://e-prostor.gov.si",
             "https://gov.si"]
 
@@ -84,13 +84,8 @@ def clean_link(url):
         url = base_url[:-1] + url
 
     url, frag = urldefrag(url)
-
     re.sub(":80/", "", url)
-
-    # re.sub("index\.html$", "", url)
-
     url = unescape(url)
-
     url = url.replace(" ", "%20")
 
     sep = '/#'
@@ -106,7 +101,19 @@ def valid_url(url):
     # ostale kontrole pravilnega url-ja
     if any(disallowed_url in url for disallowed_url in DISALLOWED):
         return False
-    return url not in frontier and url not in history and "gov.si" in url
+    if url.endswith('/'):
+        url1 = url[:-1]
+    else:
+        url1 = url + '/'
+    if url.startswith('https://'):
+        url2 = re.sub(r'https://', 'http://', url)
+    else:
+        url2 = re.sub(r'http://', 'https://', url)
+
+    return (url not in frontier and url not in history and "gov.si" in url) and \
+           (url1 not in frontier and url1 not in history and "gov.si" in url1) and \
+           (url2 not in frontier and url2 not in history and "gov.si" in url2)
+
 
 
 def crawler(path):
@@ -213,7 +220,7 @@ def add_links():
     elems = driver.find_elements_by_xpath("//a[@href]")
     for elem in elems:
         url = clean_link(elem.get_attribute("href"))
-        if valid_url(elem.get_attribute("href")):
+        if valid_url(url):
             frontier.append(url)
 
 
