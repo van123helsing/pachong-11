@@ -39,7 +39,7 @@ options = Options()
 options.headless = True
 options.add_argument("user-agent=" + AGENT_NAME)
 driver = webdriver.Firefox(profile, options=options)
-driver.set_page_load_timeout(30)
+driver.set_page_load_timeout(5)
 dbConn = db.DataBase()
 
 timeouts = dict()
@@ -70,6 +70,14 @@ def clear_www(url):
     return url
 
 
+def clear_https(url):
+    if url.startswith('http://'):
+        url = re.sub(r'http://', '', url)
+    elif url.startswith('https://'):
+        url = re.sub(r'https://', '', url)
+    return url
+
+
 def clean_link(url):
     if not url.startswith('http'):
         base_url = urljoin(driver.current_url, '.')
@@ -96,9 +104,8 @@ def valid_url(url):
     if len(url) > 200:
         return False
     # ostale kontrole pravilnega url-ja
-    for i in DISALLOWED:
-        if "gov.si" + i in url:
-            return False
+    if any(disallowed_url in url for disallowed_url in DISALLOWED):
+        return False
     return url not in frontier and url not in history and "gov.si" in url
 
 
@@ -231,7 +238,7 @@ def read_site(site):
 
         # add all disallowed pages to an array
         for i in rp.default_entry.rulelines:
-            DISALLOWED.append(parse.urljoin(site, i.path))
+            DISALLOWED.append(clear_https(clear_www(parse.urljoin(site, i.path))))
 
         robots = str(rp)
     except:
