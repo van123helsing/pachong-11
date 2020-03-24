@@ -173,7 +173,7 @@ def crawler(path):
 
         print("Size of frontier: ", frontier)
 
-        add_imgs()
+        add_imgs(page_id)
 
     except TimeoutException:
         print('Webpage did not load in within the time limit.')
@@ -183,17 +183,21 @@ def crawler(path):
         pass
 
 
-def add_imgs():
+def add_imgs(page_id):
     imgs = driver.find_elements_by_xpath("//img[@src]")
+
     for img in imgs:
         img_url = img.get_attribute("src")
         if "http" in img_url:
+            image = models.Image
+            image.page_id = page_id
             img_name = img_url.split('/')[-1]
-            r = requests.get(img_url, stream=True)
-            # TODO ce sem prav prebral navodila ne rabimo shranjevat bytov-> sam metadata slike: decode
-            # with open('./img/%s.png' % img_name, 'wb') as f:
-            #     for chunk in r.iter_content(chunk_size=128):
-            #         f.write(chunk)
+            image.filename = img_name
+            image.content_type = img_name.split('.')[-1]
+            image.data = img_url
+            image.accessed_time = datetime.now()
+            dbConn.insert_image(image)
+            #print(image.content_type)
             print('Saved %s' % img_name)
 
 
