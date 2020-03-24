@@ -26,10 +26,11 @@ profile = webdriver.FirefoxProfile()
 AGENT_NAME = 'fri-ieps-11'
 profile.set_preference("general.useragent.override", AGENT_NAME)
 DISALLOWED = []
-frontier = ["https://e-uprava.gov.si",
+frontier = ["https://gov.si",
+            "https://e-uprava.gov.si",
             "https://evem.gov.si",
-            "https://e-prostor.gov.si",
-            "https://gov.si"]
+            "https://e-prostor.gov.si"
+            ]
 
 history = set()
 
@@ -127,7 +128,7 @@ def crawler(path):
         driver.get(path)
         r = requests.get(driver.current_url, headers={'User-Agent': 'a user agent'})
         header = r.headers.get('content-type').split(";")[0]
-        timeouts[ip] = datetime.now() + timedelta(seconds=5)
+        timeouts[ip] = datetime.now() + timedelta(seconds=3)
 
         time.sleep(2)  # za javscript, da se nalozi
 
@@ -165,15 +166,15 @@ def crawler(path):
                 page_data = models.PageData
                 page_data.data_type_code = enums.DataType.OTHER.value
                 page_data.data = ''
-                if header == enums.MimeType.PDF:
+                if header == enums.MimeType.PDF.value:
                     page_data.data_type_code = enums.DataType.PDF.value
-                elif header == enums.MimeType.DOC:
+                elif header == enums.MimeType.DOC.value:
                     page_data.data_type_code = enums.DataType.DOC.value
-                elif header == enums.MimeType.DOCX:
+                elif header == enums.MimeType.DOCX.value:
                     page_data.data_type_code = enums.DataType.DOCX.value
-                elif header == enums.MimeType.PPT:
+                elif header == enums.MimeType.PPT.value:
                     page_data.data_type_code = enums.DataType.PPT.value
-                elif header == enums.MimeType.PPTX:
+                elif header == enums.MimeType.PPTX.value:
                     page_data.data_type_code = enums.DataType.PPTX.value
 
         page_id = dbConn.insert_page(page)
