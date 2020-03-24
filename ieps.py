@@ -125,7 +125,7 @@ def crawler(path):
         ip = socket.gethostbyname(urlsplit(path).netloc)
         time.sleep(is_timeout(ip))
         driver.get(path)
-        r = requests.head(driver.current_url)
+        r = requests.get(driver.current_url, headers={'User-Agent': 'a user agent'})
         header = r.headers.get('content-type').split(";")[0]
         timeouts[ip] = datetime.now() + timedelta(seconds=5)
 
