@@ -171,7 +171,7 @@ def crawler(path):
 
         add_links()
 
-        print(frontier)
+        print("Size of frontier: ", frontier)
 
         add_imgs()
 
@@ -252,7 +252,7 @@ def read_site(site):
         pass
 
     print("Inserted data for site " + site)
-    return dbConn.insert_site(models.Site(urlsplit(site).netloc, robots, sitemap))
+    return dbConn.insert_site(models.Site(clear_www(urlsplit(site).netloc), robots, sitemap))
 
 
 def main():

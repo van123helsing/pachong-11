@@ -17,8 +17,10 @@ class DataBase:
         cur.execute(
             "INSERT INTO crawldb.site (domain, robots_content, sitemap_content) VALUES (%s, %s, %s) RETURNING id",
             (data_object.domain, data_object.robots_content, data_object.sitemap_content))
-        site_id = cur.fetchone()[0]
+        site_id = cur.fetchone()
         cur.close()
+        if site_id is not None:
+            return site_id[0]
         return site_id
 
     def insert_page(self, data_object):
@@ -28,8 +30,10 @@ class DataBase:
             "VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
             (data_object.site_id, data_object.page_type_code, data_object.url,
              data_object.html_content, data_object.http_status_code, data_object.accessed_time, data_object.hash))
-        page_id = cur.fetchone()[0]
+        page_id = cur.fetchone()
         cur.close()
+        if page_id is not None:
+            return page_id[0]
         return page_id
 
     def insert_image(self, data_object):
@@ -71,6 +75,8 @@ class DataBase:
         cur.execute("SELECT id FROM crawldb.page WHERE hash=%s", (hash,))
         value = cur.fetchone()
         cur.close()
+        if value is not None:
+            return value[0]
         return value
 
     def check_if_domain_exists(self, domain):
@@ -78,4 +84,6 @@ class DataBase:
         cur.execute("SELECT id FROM crawldb.site WHERE domain=%s", (domain,))
         value = cur.fetchone()
         cur.close()
+        if value is not None:
+            return value[0]
         return value
