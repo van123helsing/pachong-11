@@ -68,7 +68,7 @@ class DataBase:
 
     def check_if_hash_exists(self, hash):
         cur = self.conn.cursor()
-        cur.execute("SELECT id, url FROM crawldb.page WHERE hash=%s", (hash,))
+        cur.execute("SELECT id FROM crawldb.page WHERE hash=%s", (hash,))
         value = cur.fetchone()
         cur.close()
         return value

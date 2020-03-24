@@ -137,11 +137,8 @@ def crawler(path):
 
         # hash ze obstaja v bazi
         if h is not None:
-            # TODO DUPLICATE - dodaj page, poporavi talebo link
             page.page_type_code = enums.PageType.DUPLICATE.value
             page.html_content = ''
-            dbConn.insert_link(models.Link(path, h))
-            return
         # hash ne obstaja v bazi
         else:
             if header == 'text/html':
@@ -168,6 +165,9 @@ def crawler(path):
         if page_data is not None:
             page_data.page_id = page_id
             dbConn.insert_page_data(page_data)
+        if h is not None:
+            print("Found duplicate, inserting link.")
+            dbConn.insert_link(models.Link(page_id, h))
 
         add_links()
 
