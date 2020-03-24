@@ -39,6 +39,7 @@ options = Options()
 options.headless = True
 options.add_argument("user-agent=" + AGENT_NAME)
 driver = webdriver.Firefox(profile, options=options)
+driver.set_page_load_timeout(30)
 dbConn = db.DataBase()
 
 timeouts = dict()
