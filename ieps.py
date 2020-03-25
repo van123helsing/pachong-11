@@ -21,6 +21,7 @@ import enums
 from datetime import datetime
 from datetime import timedelta
 import socket
+import pickle
 
 profile = webdriver.FirefoxProfile()
 AGENT_NAME = 'fri-ieps-11'
@@ -44,6 +45,8 @@ driver.set_page_load_timeout(30)
 dbConn = db.DataBase()
 
 timeouts = dict()
+
+numberOfCumulativErrors = 0
 
 
 def is_timeout(ip):
@@ -126,9 +129,9 @@ def crawler(path):
         ip = socket.gethostbyname(urlsplit(path).netloc)
         time.sleep(is_timeout(ip))
         driver.get(path)
-        r = requests.get(driver.current_url, headers={'User-Agent': 'a user agent'})
+        r = requests.get(driver.current_url, headers={'User-Agent': AGENT_NAME})
         header = r.headers.get('content-type').split(";")[0]
-        timeouts[ip] = datetime.now() + timedelta(seconds=3)
+        timeouts[ip] = datetime.now() + timedelta(seconds=5)
 
         time.sleep(2)  # za javscript, da se nalozi
 
@@ -191,11 +194,18 @@ def crawler(path):
 
         add_imgs(page_id)
 
+        global numberOfCumulativErrors
+        numberOfCumulativErrors = numberOfCumulativErrors * 0
+
     except TimeoutException:
         print('Webpage did not load in within the time limit.')
+        numberOfCumulativErrors += 1
+        print("numberOfCumulativErrors: ", numberOfCumulativErrors)
         pass
     except:
         print("Unexpected error:", str(sys.exc_info()))
+        numberOfCumulativErrors += 1
+        print("numberOfCumulativErrors: ", numberOfCumulativErrors)
         pass
 
 
@@ -235,6 +245,14 @@ def nit(nit_id):
             history.add(clean_link(address))
             frontier.pop(0)
 
+        if numberOfCumulativErrors > 10:
+            with open("history.pkl", "wb") as pickle_out:
+                pickle.dump(history, pickle_out)
+            with open("frontier.pkl", "wb") as pickle_out:
+                pickle.dump(frontier, pickle_out)
+            with open("DISALLOWED.pkl", "wb") as pickle_out:
+                pickle.dump(DISALLOWED, pickle_out)
+            break
 
 def read_site(site):
     # save current site to database
