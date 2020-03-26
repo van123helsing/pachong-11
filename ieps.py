@@ -20,7 +20,6 @@ from datetime import datetime
 from datetime import timedelta
 import socket
 import pickle
-import atexit
 
 profile = webdriver.FirefoxProfile()
 AGENT_NAME = 'fri-ieps-11'
@@ -46,7 +45,6 @@ dbConn = db.DataBase()
 timeouts = dict()
 
 numberOfCumulativErrors = 0
-numberOfPagesCrawled = 0
 
 
 def is_timeout(ip):
@@ -196,8 +194,6 @@ def crawler(path):
 
         global numberOfCumulativErrors
         numberOfCumulativErrors = numberOfCumulativErrors * 0
-        global numberOfPagesCrawled
-        numberOfPagesCrawled += 1
 
     except TimeoutException:
         print('Webpage did not load in within the time limit.')
@@ -247,14 +243,16 @@ def nit(nit_id):
             history.add(clean_link(address))
             frontier.pop(0)
 
-        if numberOfCumulativErrors > 10 or numberOfPagesCrawled % 500 == 0:
             with open("history.pkl", "wb") as pickle_out:
                 pickle.dump(history, pickle_out)
             with open("frontier.pkl", "wb") as pickle_out:
                 pickle.dump(frontier, pickle_out)
             with open("DISALLOWED.pkl", "wb") as pickle_out:
                 pickle.dump(DISALLOWED, pickle_out)
-            break
+
+            if numberOfCumulativErrors > 10:
+                break
+
 
 def read_site(site):
     # save current site to database
@@ -294,15 +292,6 @@ def read_site(site):
     return dbConn.insert_site(models.Site(clear_www(urlsplit(site).netloc), robots, sitemap))
 
 
-def exit_handler():
-    with open("history.pkl", "wb") as pickle_out:
-        pickle.dump(history, pickle_out)
-    with open("frontier.pkl", "wb") as pickle_out:
-        pickle.dump(frontier, pickle_out)
-    with open("DISALLOWED.pkl", "wb") as pickle_out:
-        pickle.dump(DISALLOWED, pickle_out)
-
-
 def main():
     while True:
         val = input("Enter the number of desired threads (1-10): ")
@@ -326,8 +315,6 @@ def main():
             with open("DISALLOWED.pkl", "rb") as pickle_in:
                 DISALLOWED = pickle.load(pickle_in)
             break
-
-    atexit.register(exit_handler)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         for i in range(int(val)):
