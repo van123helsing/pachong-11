@@ -75,6 +75,9 @@ fabric.properties
 
 venv/
 
+DISALLOWED.pkl
+frontier.pkl
+history.pkl
 
 *.log
 __pycache__/
