@@ -9,3 +9,6 @@
 1. In cmd run command: *python .\ieps.py*
 2. Select how many threads you want to use
 3. If you have ran it before you can choose to not delete the database and continue from where you left.
+
+## Database dump file
+https://filesender.arnes.si/?s=download&token=13f44407-2f24-488c-9223-eece91bbf6be&fbclid=IwAR1mGAOiLcNHYNfmPJ75k6uRHnnMVXLKGVFhK7-x8UxmOZrm2WVzvPyTN6E
