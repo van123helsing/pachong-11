@@ -98,7 +98,7 @@ def clean_link(url):
 
 def valid_url(url):
     # da preprecimo pasti
-    if len(url) > 200:
+    if len(url) 
         return False
     # ostale kontrole pravilnega url-ja
     if any(disallowed_url in url for disallowed_url in DISALLOWED):
@@ -250,8 +250,8 @@ def nit(nit_id):
             with open("DISALLOWED.pkl", "wb") as pickle_out:
                 pickle.dump(DISALLOWED, pickle_out)
 
-            if numberOfCumulativErrors > 10:
-                break
+            #if numberOfCumulativErrors > 10:
+                #break
 
 
 def read_site(site):
