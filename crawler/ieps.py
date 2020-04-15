@@ -11,11 +11,11 @@ from bs4 import BeautifulSoup
 import requests
 import re
 import time
-import db
-import models
+import crawler.db as db
+import crawler.models as models
 import sys
 import hashlib
-import enums
+import crawler.enums as enums
 from datetime import datetime
 from datetime import timedelta
 import socket
@@ -98,7 +98,7 @@ def clean_link(url):
 
 def valid_url(url):
     # da preprecimo pasti
-    if len(url) 
+    if len(url) :
         return False
     # ostale kontrole pravilnega url-ja
     if any(disallowed_url in url for disallowed_url in DISALLOWED):
