@@ -82,4 +82,5 @@ history.pkl
 *.log
 __pycache__/
 
-img/
+crawler/img/
+implementation-extraction/WebPages/
