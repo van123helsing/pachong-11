@@ -3,10 +3,10 @@ from bs4 import BeautifulSoup
 
 
 data_folder = Path("WebPages/")
-overstock1 = data_folder / "Audi.html"
-overstock2 = data_folder / "Volvo.html"
-rtvslo1 = data_folder / "jewelry01.html"
-rtvslo2 = data_folder / "jewelry02.html"
+overstock1 = data_folder / "jewelry01.html"
+overstock2 = data_folder / "jewelry02.html"
+rtvslo1 = data_folder / "Audi.html"
+rtvslo2 = data_folder / "Volvo.html"
 ceneje1 = data_folder / "PC-Ceneje.si.html"
 ceneje2 = data_folder / "Kavci-Ceneje.si.html"
 _24ur1 = data_folder / "24ur-1.html"
