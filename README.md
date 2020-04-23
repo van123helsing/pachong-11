@@ -1,6 +1,12 @@
-#Naloga 2
-
-
+# Naloga 2
+## Prerequisite
+Knjižnice:
+1. from bs4 import Comment
+2. from htmldom import htmldom
+3. from lingpy import *
+4. import re
+5. from pathlib import Path
+6. import sys
 
 # Naloga 1
 
