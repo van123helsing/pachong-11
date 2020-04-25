@@ -1,15 +1,17 @@
 import sys
-
+import XPath
+import regular_expression
+import RoadRunner
 
 def main():
     if len(sys.argv) > 1:
         ABC = sys.argv[1]
         if ABC == 'A':
-            exec(open('regular-expression.py').read())
+            regular_expression
         elif ABC == 'B':
-            exec(open('XPath.py').read())
+            XPath
         elif ABC == 'C':
-            exec(open('RoadRunner.py').read())
+            RoadRunner
         else:
             print("Kot parameter morate vnesti eno izmed črk A, B, C")
     else:

@@ -6,8 +6,6 @@ import re
 from pathlib import Path
 
 data_folder = Path("WebPages/")
-dom1 = htmldom.HtmlDom()
-dom2 = htmldom.HtmlDom()
 
 
 def clean(body):
@@ -23,8 +21,8 @@ def clean(body):
     for s in body.select('iframe'):
         s.extract()
     # izbrisemo vse komentarje
-    for s in body(text=lambda text: isinstance(text, Comment)):
-        s.extract()
+    #for s in body(text=lambda text: isinstance(text, Comment)):
+        #s.extract()
     # izbrisemo vse nepotrebne atribute
     for p in body.findAll(True):
         if 'style' in p.attrs:
@@ -72,6 +70,8 @@ def DOMtoArray(node, array):
 
 def compare(h1, h2):
     result = []
+    dom1 = htmldom.HtmlDom()
+    dom2 = htmldom.HtmlDom()
     dif1 = dom1.createDom(h1)
     dif2 = dom2.createDom(h2)
 
@@ -184,7 +184,7 @@ def onlyMinus(array):
 
 
 def saveToFile(fileName, array):
-    file1 = open(data_folder / fileName, "w")
+    file1 = open(data_folder / fileName, "w", errors='ignore')
     for i in array:
         file1.write(i)
     file1.close()
@@ -211,8 +211,8 @@ body2 = clean(readFiles.RacNovice2)
 res4 = compare(str(body1), str(body2))
 print("DONE")
 
-saveToFile("rtvslo.txt", res1)
-saveToFile("overstock.txt", res2)
-saveToFile("ceneje.si.txt", res3)
-saveToFile("racNovice.txt", res4)
+saveToFile("rtvslo-output.html", res1)
+saveToFile("overstock-output.html", res2)
+saveToFile("ceneje-output.html", res3)
+saveToFile("racNovice-output.html", res4)
 print("ALL FILES SAVED TO ./WebPages DIRECTORY.")
