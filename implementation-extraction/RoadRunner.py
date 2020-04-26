@@ -21,8 +21,8 @@ def clean(body):
     for s in body.select('iframe'):
         s.extract()
     # izbrisemo vse komentarje
-    #for s in body(text=lambda text: isinstance(text, Comment)):
-        #s.extract()
+    # for s in body(text=lambda text: isinstance(text, Comment)):
+    # s.extract()
     # izbrisemo vse nepotrebne atribute
     for p in body.findAll(True):
         if 'style' in p.attrs:
@@ -50,7 +50,7 @@ def clean(body):
 
     # izbrisemo prazne elemente
     [x.decompose() for x in body.findAll(lambda tag: (not tag.contents or len(
-        tag.get_text(strip=True)) <= 0)  and not tag.name == 'a')]
+        tag.get_text(strip=True)) <= 0) and not tag.name == 'a')]
 
     return body
 
@@ -95,7 +95,7 @@ def compare(h1, h2):
 
 def roadRunner(array1, array2, result):
     align_len = len(array1)
-    i=0
+    i = 0
     while i < align_len:
         if array1[i].startswith('/text/'):
             if not array1[i] == array2[i]:
@@ -113,13 +113,17 @@ def roadRunner(array1, array2, result):
             if not array1[i:poddrevo + 1] == array2[i:poddrevo + 1]:
 
                 if onlyMinus(array1[i:poddrevo + 1]):
-                    if array2[i] != '<div>' and ((result[len(result)-1].replace('</','<',1)).startswith((array2[i].split(' ')[0])) or (result[len(result)-1].replace('(<','<',1)).startswith((array2[i].split(' ')[0]))):
+                    if array2[i] != '<div>' and (
+                            (result[len(result) - 1].replace('</', '<', 1)).startswith((array2[i].split(' ')[0])) or (
+                    result[len(result) - 1].replace('(<', '<', 1)).startswith((array2[i].split(' ')[0]))):
                         result.append('(' + ''.join(array2[i:poddrevo + 1]) + ') +')
                     else:
                         result.append('(' + ''.join(array2[i:poddrevo + 1]) + ') ?')
                     i = poddrevo
                 elif onlyMinus(array2[i:poddrevo + 1]):
-                    if array1[i] != '<div>' and ((result[len(result)-1].replace('</','<',1)).startswith((array1[i].split(' ')[0])) or (result[len(result)-1].replace('(<','<',1)).startswith((array1[i].split(' ')[0]))):
+                    if array1[i] != '<div>' and (
+                            (result[len(result) - 1].replace('</', '<', 1)).startswith((array1[i].split(' ')[0])) or (
+                    result[len(result) - 1].replace('(<', '<', 1)).startswith((array1[i].split(' ')[0]))):
                         result.append('(' + ''.join(array1[i:poddrevo + 1]) + ') +')
                     else:
                         result.append('(' + ''.join(array1[i:poddrevo + 1]) + ') ?')
@@ -128,14 +132,14 @@ def roadRunner(array1, array2, result):
                 else:
                     izpisiPrviTag(array1, array2, i, result)
 
-                    if poddrevo-i > 1:
+                    if poddrevo - i > 1:
                         roadRunner(array1[i + 1:poddrevo], array2[i + 1:poddrevo], result)
                         i = poddrevo
 
                     izpisiZadnjiTag(array1, array2, poddrevo, result)
             else:
                 i = poddrevo
-        i+=1
+        i += 1
 
 
 def izpisiZadnjiTag(array1, array2, poddrevo, result):
@@ -173,7 +177,7 @@ def sestaviPoddrevo(ln, array1, i):
                 count = count - 1
         elif array1[i] == array1[j]:
             count += 1
-    return ln-1
+    return ln - 1
 
 
 def onlyMinus(array):
@@ -190,29 +194,30 @@ def saveToFile(fileName, array):
     file1.close()
 
 
-print("STARTED COMPARING RTVSLO")
-body1 = clean(readFiles.rtvslo1)
-body2 = clean(readFiles.rtvslo2)
-res1 = compare(str(body1), str(body2))
+def process():
+    print("STARTED COMPARING RTVSLO")
+    body1 = clean(readFiles.rtvslo1)
+    body2 = clean(readFiles.rtvslo2)
+    res1 = compare(str(body1), str(body2))
 
-print("STARTED COMPARING OVERSTOCK")
-body1 = clean(readFiles.overstock1)
-body2 = clean(readFiles.overstock2)
-res2 = compare(str(body1), str(body2))
+    print("STARTED COMPARING OVERSTOCK")
+    body1 = clean(readFiles.overstock1)
+    body2 = clean(readFiles.overstock2)
+    res2 = compare(str(body1), str(body2))
 
-print("STARTED COMPARING CENEJE.SI")
-body1 = clean(readFiles.ceneje1)
-body2 = clean(readFiles.ceneje2)
-res3 = compare(str(body1), str(body2))
+    print("STARTED COMPARING CENEJE.SI")
+    body1 = clean(readFiles.ceneje1)
+    body2 = clean(readFiles.ceneje2)
+    res3 = compare(str(body1), str(body2))
 
-print("STARTED COMPARING 24ur")
-body1 = clean(readFiles.RacNovice1)
-body2 = clean(readFiles.RacNovice2)
-res4 = compare(str(body1), str(body2))
-print("DONE")
+    print("STARTED COMPARING RačunalniškeNovice")
+    body1 = clean(readFiles.RacNovice1)
+    body2 = clean(readFiles.RacNovice2)
+    res4 = compare(str(body1), str(body2))
+    print("DONE")
 
-saveToFile("rtvslo-output.html", res1)
-saveToFile("overstock-output.html", res2)
-saveToFile("ceneje-output.html", res3)
-saveToFile("racNovice-output.html", res4)
-print("ALL FILES SAVED TO ./WebPages DIRECTORY.")
+    saveToFile("rtvslo-output.html", res1)
+    saveToFile("overstock-output.html", res2)
+    saveToFile("ceneje-output.html", res3)
+    saveToFile("racNovice-output.html", res4)
+    print("ALL FILES SAVED TO ./WebPages DIRECTORY.")
