@@ -8,6 +8,7 @@ rtvslo1 = data_folder / "Audi.html"
 rtvslo2 = data_folder / "Volvo.html"
 ceneje1 = data_folder / "PC-Ceneje.si.html"
 ceneje2 = data_folder / "Kavci-Ceneje.si.html"
+ceneje3 = data_folder / "cenejeXPath.html"
 RacNovice1 = data_folder / "RacNovice1.html"
 RacNovice2 = data_folder / "RacNovice2.html"
 
@@ -17,6 +18,7 @@ rtvslo1 = open(rtvslo1, "r", encoding='utf-8', errors='ignore')
 rtvslo2 = open(rtvslo2, "r", encoding='utf-8', errors='ignore')
 ceneje1 = open(ceneje1, "r", encoding='utf-8', errors='ignore')
 ceneje2 = open(ceneje2, "r", encoding='utf-8', errors='ignore')
+ceneje3 = open(ceneje3, "r", encoding='utf-8', errors='ignore')
 RacNovice1 = open(RacNovice1, "r", encoding='utf-8', errors='ignore')
 RacNovice2 = open(RacNovice2, "r", encoding='utf-8', errors='ignore')
 
@@ -26,5 +28,6 @@ rtvslo1 = BeautifulSoup(rtvslo1.read(), 'html.parser')
 rtvslo2 = BeautifulSoup(rtvslo2.read(), 'html.parser')
 ceneje1 = BeautifulSoup(ceneje1.read(), 'html.parser')
 ceneje2 = BeautifulSoup(ceneje2.read(), 'html.parser')
+ceneje3 = BeautifulSoup(ceneje3.read(), 'html.parser')
 RacNovice1 = BeautifulSoup(RacNovice1.read(), 'html.parser')
 RacNovice2 = BeautifulSoup(RacNovice2.read(), 'html.parser')
