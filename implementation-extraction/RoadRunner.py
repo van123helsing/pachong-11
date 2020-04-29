@@ -68,8 +68,8 @@ def DOMtoArray(node, array):
             array.append('/text/' + j.text)
 
 
-def compare(h1, h2):
-    result = []
+def compare(h1, h2, isShort):
+    result = ["<body>"]
     dom1 = htmldom.HtmlDom()
     dom2 = htmldom.HtmlDom()
     dif1 = dom1.createDom(h1)
@@ -83,17 +83,19 @@ def compare(h1, h2):
     node = dif2.referenceToRootElement
     DOMtoArray(node, array2)
 
-    alignments = pw_align(array1, array2)
+    almA, almB, sim = nw_align(array1, array2)
 
-    roadRunner(alignments[0], alignments[1], result)
+    roadRunner(almA, almB, result, isShort)
 
     for n in range(len(result)):
         result[n] = re.sub("<a\shref=.+?>", '<a href=...>', result[n])
 
+    result.append("</body>")
+
     return result
 
 
-def roadRunner(array1, array2, result):
+def roadRunner(array1, array2, result, isShort):
     align_len = len(array1)
     i = 0
     while i < align_len:
@@ -116,27 +118,29 @@ def roadRunner(array1, array2, result):
                     if array2[i] != '<div>' and (
                             (result[len(result) - 1].replace('</', '<', 1)).startswith((array2[i].split(' ')[0])) or (
                     result[len(result) - 1].replace('(<', '<', 1)).startswith((array2[i].split(' ')[0]))):
-                        result.append('(' + ''.join(array2[i:poddrevo + 1]) + ') +')
+                        result.append('(' + ''.join(array2[i:poddrevo + 1]) + ')+ ')
                     else:
-                        result.append('(' + ''.join(array2[i:poddrevo + 1]) + ') ?')
+                        result.append('(' + ''.join(array2[i:poddrevo + 1]) + ')? ')
                     i = poddrevo
                 elif onlyMinus(array2[i:poddrevo + 1]):
                     if array1[i] != '<div>' and (
                             (result[len(result) - 1].replace('</', '<', 1)).startswith((array1[i].split(' ')[0])) or (
                     result[len(result) - 1].replace('(<', '<', 1)).startswith((array1[i].split(' ')[0]))):
-                        result.append('(' + ''.join(array1[i:poddrevo + 1]) + ') +')
+                        result.append('(' + ''.join(array1[i:poddrevo + 1]) + ')+ ')
                     else:
-                        result.append('(' + ''.join(array1[i:poddrevo + 1]) + ') ?')
+                        result.append('(' + ''.join(array1[i:poddrevo + 1]) + ')? ')
 
                     i = poddrevo
                 else:
-                    izpisiPrviTag(array1, array2, i, result)
+                    if not isShort:
+                        izpisiPrviTag(array1, array2, i, result)
 
                     if poddrevo - i > 1:
-                        roadRunner(array1[i + 1:poddrevo], array2[i + 1:poddrevo], result)
+                        roadRunner(array1[i + 1:poddrevo], array2[i + 1:poddrevo], result, isShort)
                         i = poddrevo
 
-                    izpisiZadnjiTag(array1, array2, poddrevo, result)
+                    if not isShort:
+                        izpisiZadnjiTag(array1, array2, poddrevo, result)
             else:
                 i = poddrevo
         i += 1
@@ -198,26 +202,34 @@ def process():
     print("STARTED COMPARING RTVSLO")
     body1 = clean(readFiles.rtvslo1)
     body2 = clean(readFiles.rtvslo2)
-    res1 = compare(str(body1), str(body2))
+    res_short = compare(str(body1), str(body2), True)
+    res_full = compare(str(body1), str(body2), False)
 
     print("STARTED COMPARING OVERSTOCK")
     body1 = clean(readFiles.overstock1)
     body2 = clean(readFiles.overstock2)
-    res2 = compare(str(body1), str(body2))
+    res2_short = compare(str(body1), str(body2), True)
+    res2_full = compare(str(body1), str(body2), False)
 
     print("STARTED COMPARING CENEJE.SI")
     body1 = clean(readFiles.ceneje1)
     body2 = clean(readFiles.ceneje2)
-    res3 = compare(str(body1), str(body2))
+    res3_short = compare(str(body1), str(body2), True)
+    res3_full = compare(str(body1), str(body2), False)
 
     print("STARTED COMPARING RačunalniškeNovice")
     body1 = clean(readFiles.RacNovice1)
     body2 = clean(readFiles.RacNovice2)
-    res4 = compare(str(body1), str(body2))
+    res4_short = compare(str(body1), str(body2), True)
+    res4_full = compare(str(body1), str(body2), False)
     print("DONE")
 
-    saveToFile("rtvslo-output.html", res1)
-    saveToFile("overstock-output.html", res2)
-    saveToFile("ceneje-output.html", res3)
-    saveToFile("racNovice-output.html", res4)
+    saveToFile("rtvslo-output-short.html", res_short)
+    saveToFile("overstock-output-short.html", res2_short)
+    saveToFile("ceneje-output-short.html", res3_short)
+    saveToFile("racNovice-output-short.html", res4_short)
+    saveToFile("rtvslo-output-full.html", res_full)
+    saveToFile("overstock-output-full.html", res2_full)
+    saveToFile("ceneje-output-full.html", res3_full)
+    saveToFile("racNovice-output-full.html", res4_full)
     print("ALL FILES SAVED TO ./WebPages DIRECTORY.")

@@ -8,6 +8,9 @@ Knjižnice:
 5. from pathlib import Path
 6. import sys
 
+## RUN extraction
+
+
 # Naloga 1
 
 ## Prerequisite
