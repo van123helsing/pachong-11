@@ -232,4 +232,5 @@ def process():
     saveToFile("overstock-output-full.html", res2_full)
     saveToFile("ceneje-output-full.html", res3_full)
     saveToFile("racNovice-output-full.html", res4_full)
-    print("ALL FILES SAVED TO ./WebPages DIRECTORY.")
+    print("ALL FILES SAVED TO ./WebPages/output/RoadRunner/ DIRECTORY.")
+

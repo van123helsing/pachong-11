@@ -9,7 +9,10 @@ Knjižnice:
 6. import sys
 
 ## RUN extraction
-
+Run one of the following commands (from the implementation-extraction directory), depending on the method you want to use:
+1. Regular expression: *python .\run-extraction.py A*
+2. XPath: *python .\run-extraction.py B*
+3. RoadRunner: *python .\run-extraction.py C*
 
 # Naloga 1
 
