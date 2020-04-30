@@ -5,7 +5,7 @@ from lingpy import *
 import re
 from pathlib import Path
 
-data_folder = Path("WebPages/")
+data_folder = Path("WebPages/output/RoadRunner/")
 
 
 def clean(body):

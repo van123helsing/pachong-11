@@ -4,7 +4,7 @@ from lxml import html
 from pathlib import Path
 
 
-data_folder = Path("WebPages/")
+data_folder = Path("WebPages/output/RegularExpression")
 
 
 def process_regex(page_content, type):
@@ -52,7 +52,7 @@ def process_regex(page_content, type):
 
 def saveToFile(fileName, data):
     with open(data_folder / fileName, 'w') as outfile:
-        json.dump(data, outfile)
+        json.dump(data, outfile, ensure_ascii=False)
 
 def process():
 
