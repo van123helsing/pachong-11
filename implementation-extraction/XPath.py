@@ -13,7 +13,7 @@ def process_xpath(page_content, type):
 
     if type == 'rtvslo':
         data = {'author': tree.xpath('//*[@id="main-container"]/div[3]/div/div[1]/div[1]/div/text()')[0],
-                'publishedTime': tree.xpath('//*[@id="main-container"]/div[3]/div/div[1]/div[2]/text()[1]')[0],
+                'publishedTime': ' '.join(tree.xpath('//*[@id="main-container"]/div[3]/div/div[1]/div[2]/text()[1]')[0].split()),
                 'title': tree.xpath('//*[@id="main-container"]/div[3]/div/header/h1/text()')[0],
                 'subTitle': tree.xpath('//*[@id="main-container"]/div[3]/div/header/div[2]/text()')[0],
                 'lead': tree.xpath('//*[@id="main-container"]/div[3]/div/header/p/text()')[0],
@@ -21,7 +21,7 @@ def process_xpath(page_content, type):
     elif type == 'RačunalniškeNovice':
         data = {'category': ' -> '.join(tree.xpath('//*[@id="whole-path"]/a/text()')),
                 'subCategory': tree.xpath('//*[@id="content-holder"]/div[3]/div[1]/div[3]/div[3]/text()')[0],
-                'publishedTime': tree.xpath('//*[@id="content-holder"]/div[3]/div[1]/div[3]/div[1]/text()')[0],
+                'publishedTime': ' '.join(tree.xpath('//*[@id="content-holder"]/div[3]/div[1]/div[3]/div[1]/text()')[0].split()),
                 'title': tree.xpath('//*[@id="_iprom_inStream"]/h1/text()')[0],
                 'subTitle': ', '.join(tree.xpath('//*[@id="single-art-text"]/p/strong/text()')),
                 'content': ' '.join(tree.xpath('//*[@id="single-art-text"]/p/text()'))}
@@ -43,7 +43,7 @@ def process_xpath(page_content, type):
         for title in titles:
             data[title] = {
                 'title': titles[i],
-                'content': contents[i],
+                'content': ' '.join(contents[i].split()),
                 'listPrice': list_prices[i],
                 'price': prices[i],
                 'saving': savings[i].split(' ')[0],
