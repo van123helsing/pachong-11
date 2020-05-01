@@ -1,1 +1,129 @@
-{"category": "Sedežne garniture", "numberOfListings": "1032", "Kotna sedežna garnitura LUXUS": {"title": "Kotna sedežna garnitura LUXUS", "price": "297,42", "stores": "Dom24.si"}, "Kotna sedežna garnitura MARINO": {"title": "Kotna sedežna garnitura MARINO", "price": "772,90", "stores": "Več trgovin"}, "Kotna sedežna garnitura  NINA, rjava": {"title": "Kotna sedežna garnitura  NINA, rjava", "price": "566,90", "stores": "Dom24.si"}, "Kotna garnitura MT50": {"title": "Kotna garnitura MT50", "price": "797,00", "stores": "Pohistvo.si"}, "Kotna sedežna garnitura VERONIKA, rjava": {"title": "Kotna sedežna garnitura VERONIKA, rjava", "price": "479,90", "stores": "Dom24.si"}, "Kotna sedežna garnitura CUBA": {"title": "Kotna sedežna garnitura CUBA", "price": "374,00", "stores": "Svetpohistva.si"}, "Kotna garnitura MT557": {"title": "Kotna garnitura MT557", "price": "861,00", "stores": "Pohistvo.si"}, "Kotna sedežna garnitura TON, črna-siva": {"title": "Kotna sedežna garnitura TON, črna-siva", "price": "895,90", "stores": "Dom24.si"}, "Kotna garnitura MT589": {"title": "Kotna garnitura MT589", "price": "798,00", "stores": "Pohistvo.si"}, "Kotna garnitura MT6": {"title": "Kotna garnitura MT6", "price": "864,00", "stores": "Pohistvo.si"}, "Kotna sedežna garnitura VERONIKA, bela-rjava": {"title": "Kotna sedežna garnitura VERONIKA, bela-rjava", "price": "479,90", "stores": "Dom24.si"}, "Kotna sedežna garnitura ARON 2": {"title": "Kotna sedežna garnitura ARON 2", "price": "660,90", "stores": "Dom24.si"}, "Kotna sedežna garnitura TOM, siva-črna": {"title": "Kotna sedežna garnitura TOM, siva-črna", "price": "663,90", "stores": "Dom24.si"}, "Kotna sedežna garnitura LOLA": {"title": "Kotna sedežna garnitura LOLA", "price": "681,99", "stores": "Dom24.si"}, "Mirjan kotna garnitura MT526": {"title": "Mirjan kotna garnitura MT526", "price": "671,00", "stores": "Pohistvo.si"}, "Kotna sedežna garnitura LUXUS 2": {"title": "Kotna sedežna garnitura LUXUS 2", "price": "329,99", "stores": "Dom24.si"}, "ELTAP MEBLE kotna sedežna garnitura Ottavio": {"title": "ELTAP MEBLE kotna sedežna garnitura Ottavio", "price": "586,00", "stores": "Svetpohistva.si"}, "Kotna sedežna garnitura TANTALUS 1": {"title": "Kotna sedežna garnitura TANTALUS 1", "price": "340,50", "stores": "Dom24.si"}, "ELTAP MEBLE kotna sedežna garnitura Sorento": {"title": "ELTAP MEBLE kotna sedežna garnitura Sorento", "price": "661,00", "stores": "Svetpohistva.si"}, "Kotna sedežna garnitura TOM, črna-siva": {"title": "Kotna sedežna garnitura TOM, črna-siva", "price": "649,90", "stores": "Dom24.si"}, "LASKI MEBLE kotna sedežna garnitura FINEZJA": {"title": "LASKI MEBLE kotna sedežna garnitura FINEZJA", "price": "405,00", "stores": "Svetpohistva.si"}, "Kotna sedežna garnitura LOLA 4": {"title": "Kotna sedežna garnitura LOLA 4", "price": "711,99", "stores": "Dom24.si"}, "ELTAP MEBLE kotna sedežna garnitura Puerto": {"title": "ELTAP MEBLE kotna sedežna garnitura Puerto", "price": "627,00", "stores": "Svetpohistva.si"}, "Kotna sedežna garnitura SARA": {"title": "Kotna sedežna garnitura SARA", "price": "835,90", "stores": "Dom24.si"}, "Kotna sedežna garnitura ROVIN 2": {"title": "Kotna sedežna garnitura ROVIN 2", "price": "871,90", "stores": "Dom24.si"}}
+{
+  "category": "Sedežne garniture",
+  "numberOfListings": "1032",
+  "Kotna sedežna garnitura LUXUS": {
+    "title": "Kotna sedežna garnitura LUXUS",
+    "price": "297,42",
+    "stores": "Dom24.si"
+  },
+  "Kotna sedežna garnitura MARINO": {
+    "title": "Kotna sedežna garnitura MARINO",
+    "price": "772,90",
+    "stores": "Več trgovin"
+  },
+  "Kotna sedežna garnitura  NINA, rjava": {
+    "title": "Kotna sedežna garnitura  NINA, rjava",
+    "price": "566,90",
+    "stores": "Dom24.si"
+  },
+  "Kotna garnitura MT50": {
+    "title": "Kotna garnitura MT50",
+    "price": "797,00",
+    "stores": "Pohistvo.si"
+  },
+  "Kotna sedežna garnitura VERONIKA, rjava": {
+    "title": "Kotna sedežna garnitura VERONIKA, rjava",
+    "price": "479,90",
+    "stores": "Dom24.si"
+  },
+  "Kotna sedežna garnitura CUBA": {
+    "title": "Kotna sedežna garnitura CUBA",
+    "price": "374,00",
+    "stores": "Svetpohistva.si"
+  },
+  "Kotna garnitura MT557": {
+    "title": "Kotna garnitura MT557",
+    "price": "861,00",
+    "stores": "Pohistvo.si"
+  },
+  "Kotna sedežna garnitura TON, črna-siva": {
+    "title": "Kotna sedežna garnitura TON, črna-siva",
+    "price": "895,90",
+    "stores": "Dom24.si"
+  },
+  "Kotna garnitura MT589": {
+    "title": "Kotna garnitura MT589",
+    "price": "798,00",
+    "stores": "Pohistvo.si"
+  },
+  "Kotna garnitura MT6": {
+    "title": "Kotna garnitura MT6",
+    "price": "864,00",
+    "stores": "Pohistvo.si"
+  },
+  "Kotna sedežna garnitura VERONIKA, bela-rjava": {
+    "title": "Kotna sedežna garnitura VERONIKA, bela-rjava",
+    "price": "479,90",
+    "stores": "Dom24.si"
+  },
+  "Kotna sedežna garnitura ARON 2": {
+    "title": "Kotna sedežna garnitura ARON 2",
+    "price": "660,90",
+    "stores": "Dom24.si"
+  },
+  "Kotna sedežna garnitura TOM, siva-črna": {
+    "title": "Kotna sedežna garnitura TOM, siva-črna",
+    "price": "663,90",
+    "stores": "Dom24.si"
+  },
+  "Kotna sedežna garnitura LOLA": {
+    "title": "Kotna sedežna garnitura LOLA",
+    "price": "681,99",
+    "stores": "Dom24.si"
+  },
+  "Mirjan kotna garnitura MT526": {
+    "title": "Mirjan kotna garnitura MT526",
+    "price": "671,00",
+    "stores": "Pohistvo.si"
+  },
+  "Kotna sedežna garnitura LUXUS 2": {
+    "title": "Kotna sedežna garnitura LUXUS 2",
+    "price": "329,99",
+    "stores": "Dom24.si"
+  },
+  "ELTAP MEBLE kotna sedežna garnitura Ottavio": {
+    "title": "ELTAP MEBLE kotna sedežna garnitura Ottavio",
+    "price": "586,00",
+    "stores": "Svetpohistva.si"
+  },
+  "Kotna sedežna garnitura TANTALUS 1": {
+    "title": "Kotna sedežna garnitura TANTALUS 1",
+    "price": "340,50",
+    "stores": "Dom24.si"
+  },
+  "ELTAP MEBLE kotna sedežna garnitura Sorento": {
+    "title": "ELTAP MEBLE kotna sedežna garnitura Sorento",
+    "price": "661,00",
+    "stores": "Svetpohistva.si"
+  },
+  "Kotna sedežna garnitura TOM, črna-siva": {
+    "title": "Kotna sedežna garnitura TOM, črna-siva",
+    "price": "649,90",
+    "stores": "Dom24.si"
+  },
+  "LASKI MEBLE kotna sedežna garnitura FINEZJA": {
+    "title": "LASKI MEBLE kotna sedežna garnitura FINEZJA",
+    "price": "405,00",
+    "stores": "Svetpohistva.si"
+  },
+  "Kotna sedežna garnitura LOLA 4": {
+    "title": "Kotna sedežna garnitura LOLA 4",
+    "price": "711,99",
+    "stores": "Dom24.si"
+  },
+  "ELTAP MEBLE kotna sedežna garnitura Puerto": {
+    "title": "ELTAP MEBLE kotna sedežna garnitura Puerto",
+    "price": "627,00",
+    "stores": "Svetpohistva.si"
+  },
+  "Kotna sedežna garnitura SARA": {
+    "title": "Kotna sedežna garnitura SARA",
+    "price": "835,90",
+    "stores": "Dom24.si"
+  },
+  "Kotna sedežna garnitura ROVIN 2": {
+    "title": "Kotna sedežna garnitura ROVIN 2",
+    "price": "871,90",
+    "stores": "Dom24.si"
+  }
+}
