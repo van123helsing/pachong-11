@@ -1,7 +1,7 @@
 from pathlib import Path
 from bs4 import BeautifulSoup
 
-data_folder = Path("WebPages/")
+data_folder = Path("input-extraction/")
 overstock1 = data_folder / "jewelry01.html"
 overstock2 = data_folder / "jewelry02.html"
 rtvslo1 = data_folder / "Audi.html"

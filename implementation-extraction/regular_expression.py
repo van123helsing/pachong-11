@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 
-data_folder = Path("WebPages/output/RegularExpression/")
+data_folder = Path("input-extraction/output/RegularExpression/")
 
 def convertArray(a):
     str = " ".join(a)
@@ -116,33 +116,33 @@ def saveToFile(fileName, data):
 
 def process():
 
-    rtvslo1 = open('Webpages/Audi.html','r', encoding='utf8').read()
+    rtvslo1 = open('input-extraction/Audi.html','r', encoding='utf8').read()
     # with open("text.txt", "w", encoding="utf8") as f:
     #     f.write(rtvslo1)
     rtvslo1_data = process_regex(rtvslo1,"rtvslo")
     saveToFile("Re-rtv1-output.json", rtvslo1_data)
 
-    rtvslo2 = open('Webpages/Volvo.html','r', encoding='utf8').read()
+    rtvslo2 = open('input-extraction/Volvo.html','r', encoding='utf8').read()
     rtvslo2_data = process_regex(rtvslo2,"rtvslo")
     saveToFile("Re-rtv2-output.json", rtvslo2_data)
 
-    rac_novice1 = open('Webpages/RacNovice1.html','r', encoding='utf8').read()
+    rac_novice1 = open('input-extraction/RacNovice1.html','r', encoding='utf8').read()
     rac_novice1_data = process_regex(rac_novice1,"rac_novice")
     saveToFile("Re-racNovice1-output.json", rac_novice1_data)
 
-    overstock1 = open('WebPages/jewelry01.html','r', encoding='utf-8', errors='ignore').read()
+    overstock1 = open('input-extraction/jewelry01.html','r', encoding='utf-8', errors='ignore').read()
     doverstock1_data = process_regex(overstock1, "overstock")
     saveToFile("Re-overstock1-output.json", doverstock1_data)
 
-    overstock2 = open('WebPages/jewelry02.html','r', encoding='utf-8', errors='ignore').read()
+    overstock2 = open('input-extraction/jewelry02.html','r', encoding='utf-8', errors='ignore').read()
     doverstock2_data = process_regex(overstock2, "overstock")
     saveToFile("Re-overstock2-output.json", doverstock2_data)
 
-    ceneje1 = open('WebPages/PC-Ceneje.si.html', 'r', encoding='utf-8', errors='ignore').read()
+    ceneje1 = open('input-extraction/PC-Ceneje.si.html', 'r', encoding='utf-8', errors='ignore').read()
     ceneje1_data = process_regex(ceneje1, "ceneje")
     saveToFile("Re-ceneje1-output.json", ceneje1_data)
 
-    ceneje2 = open('WebPages/Kavci-Ceneje.si.html', 'r', encoding='utf-8', errors='ignore').read()
+    ceneje2 = open('input-extraction/Kavci-Ceneje.si.html', 'r', encoding='utf-8', errors='ignore').read()
     ceneje2_data = process_regex(ceneje2, "ceneje")
     saveToFile("Re-ceneje2-output.json", ceneje2_data)
 

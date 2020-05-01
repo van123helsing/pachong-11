@@ -5,7 +5,7 @@ from lingpy import *
 import re
 from pathlib import Path
 
-data_folder = Path("WebPages/output/RoadRunner/")
+data_folder = Path("input-extraction/output/RoadRunner/")
 
 
 def clean(body):
@@ -232,5 +232,5 @@ def process():
     saveToFile("overstock-output-full.html", res2_full)
     saveToFile("ceneje-output-full.html", res3_full)
     saveToFile("racNovice-output-full.html", res4_full)
-    print("ALL FILES SAVED TO ./WebPages/output/RoadRunner/ DIRECTORY.")
+    print("ALL FILES SAVED TO ./input-extraction/output/RoadRunner/ DIRECTORY.")
 

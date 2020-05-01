@@ -4,7 +4,7 @@ import re
 from lxml import html
 from pathlib import Path
 
-data_folder = Path("WebPages/output/XPath/")
+data_folder = Path("input-extraction/output/XPath/")
 
 
 def process_xpath(page_content, type):
