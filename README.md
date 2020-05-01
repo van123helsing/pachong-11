@@ -8,7 +8,6 @@ Knjižnice:
 5. from pathlib import Path
 6. import sys
 7. import json
-8. import re
 9. from lxml import html
 10. import regex
 11. from pathlib import Path
