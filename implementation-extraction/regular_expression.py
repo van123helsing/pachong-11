@@ -70,7 +70,7 @@ def process_regex(page_content, type):
         # c1 = re.sub('<[^<]+?>', '', b1).replace('\n', '').strip()
         # print(c1)
 
-        content_match = regex.compile(r"<div .*? id=\"single-art-text\">[\s\S]*?(<p[\s\S]*?>[\s]*?(<.*?>)?([\s\S]*?)[\s]*?(<.*?>)?[\s]*?<\/p[\s\S]*?>[\s\S]*?)*<div .*? id=\"fb-root\">").finditer(page_content)
+        content_match = regex.compile(r"<div .*? id=\"single-art-text\">[\s\S]*?(<p[\s\S]*?>(<.*?>)?([\s\S]*?)(<.*?>)?<\/p[\s\S]*?>[\s\S]*?)*<div .*? id=\"fb-root\">").finditer(page_content)
         content = ""
         for z in content_match:
             for capture in z.captures(3):
@@ -127,14 +127,8 @@ def process():
     saveToFile("Re-rtv2-output.json", rtvslo2_data)
 
     rac_novice1 = open('Webpages/RacNovice1.html','r', encoding='utf8').read()
-    # with open("text.txt", "w", encoding="utf8") as f:
-    #     f.write(rac_novice1)
     rac_novice1_data = process_regex(rac_novice1,"rac_novice")
     saveToFile("Re-racNovice1-output.json", rac_novice1_data)
-
-    rac_novice2 = open('Webpages/RacNovice2.html','r', encoding='utf8').read()
-    rac_novice2_data = process_regex(rac_novice2,"rac_novice")
-    saveToFile("Re-racNovice2-output.json", rac_novice2_data)
 
     overstock1 = open('WebPages/jewelry01.html','r', encoding='utf-8', errors='ignore').read()
     doverstock1_data = process_regex(overstock1, "overstock")
@@ -153,11 +147,6 @@ def process():
     saveToFile("Re-ceneje2-output.json", ceneje2_data)
 
 
-
-
-
-if __name__ =="__main__":
-    process()
 
 
 
