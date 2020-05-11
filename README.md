@@ -1,3 +1,15 @@
+# Naloga 3
+## Prerequisite
+Note: code was developed in python version 3.6.2
+1. In ./implementation-indexing directory run command `pip install -r requirements.txt`
+
+## RUN database generator
+1. In ./implementation-indexing directory run command `python run-data-process.py`
+
+## RUN search
+1. For BASIC search in ./implementation-indexing directory run command `python run-basic-search.py`
+1. For SQLITE search in ./implementation-indexing directory run command `python run-sqlite-search.py`
+
 # Naloga 2
 ## Prerequisite
 Knjižnice:
