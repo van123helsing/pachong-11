@@ -11,7 +11,7 @@ import sys
 conn = sqlite3.connect('inverted-index.db')
 data_folder = Path("input/")
 dissalowed = ['', '-', '.', ',', '!', '?', '(', ')', '...', '--', ':', ';', '*', '×', '/', '@', '{', '}', '[', ']', '–',
-              '©', '%', '$', '€','``', "''",'....' ,'«','»' ]
+              '©', '%', '$', '€', '``', "''", '....', '«', '»']
 
 
 def create_db():
@@ -34,10 +34,12 @@ def create_db():
                 documentName TEXT NOT NULL,
                 frequency INTEGER NOT NULL,
                 indexes TEXT NOT NULL,
+                snippets TEXT NOT NULL,
                 PRIMARY KEY(word, documentName),
                 FOREIGN KEY (word) REFERENCES IndexWord(word)
             );
         ''')
+
         print("Tabele so ustvarjene.")
     except:
         print("Povezava z bazo ni uspela.")
@@ -45,13 +47,14 @@ def create_db():
     conn.commit()
 
 
-def insert_in_db(word, documentName, frequency, indexes):
+def insert_in_db(word, documentName, frequency, indexes, snippets):
     c = conn.cursor()
     try:
         c.execute("INSERT INTO IndexWord (word) VALUES (?)", (word,))
     except:
         pass
-    c.execute("INSERT INTO Posting (word,documentName,frequency,indexes) VALUES (?,?,?,?)", (str(word),str(documentName),frequency,indexes))
+    c.execute("INSERT INTO Posting (word,documentName,frequency,indexes,snippets) VALUES (?,?,?,?,?)",
+              (str(word), str(documentName), frequency, indexes, snippets))
 
     conn.commit()
 
@@ -89,7 +92,7 @@ def insert_data(folder):
             for key in result:
                 value = result[key]
                 value = [str(x) for x in value]
-                insert_in_db(key, str(folder)+'/'+str(i), len(value), ','.join(value))
+                insert_in_db(key, str(folder) + '/' + str(i), len(value), ','.join(value))
 
     progress.close()
 
