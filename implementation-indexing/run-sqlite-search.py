@@ -2,7 +2,6 @@ import sqlite3
 from tabulate import tabulate
 import hashlib
 
-
 conn = sqlite3.connect('inverted-index.db')
 
 
@@ -15,10 +14,10 @@ def search(search_term):
         for row in rows:
             key = hashlib.md5(row[1].encode()).hexdigest()
             if key not in output:
-                output[key] = [row[0], row[1], get_snippet(row[2])]
+                output[key] = [row[0], row[1], row[2]]
             else:
                 output[key][0] += row[0]
-                output[key][2] += ' ... ' + get_snippet(row[2])
+                output[key][2] += row[2]
 
     output = list(output.values())
     output.sort(key=lambda x: x[0], reverse=1)
@@ -28,18 +27,7 @@ def search(search_term):
 def select_from_db(word):
     c = conn.cursor()
     try:
-        c.execute("SELECT frequency, documentName, Indexes FROM Posting WHERE word LIKE ?",
-                  (word,))
-    except:
-        pass
-
-    return c.fetchall()
-
-
-def get_snippet(word, document, index):
-    c = conn.cursor()
-    try:
-        c.execute("SELECT frequency, documentName, word FROM Posting WHERE word LIKE ?",
+        c.execute("SELECT frequency, documentName, snippets FROM Posting WHERE word LIKE ?",
                   (word,))
     except:
         pass
@@ -49,6 +37,12 @@ def get_snippet(word, document, index):
 
 def main():
     search_term = "Sistem SPOT"
+    # search_term = "predelovalne dejavnosti"
+    # search_term = "trgovina"
+    # search_term = "social services"
+    # search_term = "ministrstvo za zdravje"
+    # search_term = "republika slovenija"
+    # search_term = "računalništvo in informatika"
     print("Začenjam iskanje pojavitev: " + search_term)
     search(search_term)
     print("\nKončano!")

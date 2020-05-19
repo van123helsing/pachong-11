@@ -75,8 +75,8 @@ def insert_data(folder):
                 s.extract()
             stop_words = stopwords.stop_words_slovene
             text = nltk.word_tokenize(soup.get_text())
-            text = [x.lower() for x in text]
-            filtered_sentence = [w for w in text if not w in stop_words]
+            text_lower = [x.lower() for x in text]
+            filtered_sentence = [w for w in text_lower if not w in stop_words]
             result = {}
             index = 0
             for j in filtered_sentence:
@@ -90,9 +90,43 @@ def insert_data(folder):
                     index += 1
 
             for key in result:
-                value = result[key]
-                value = [str(x) for x in value]
-                insert_in_db(key, str(folder) + '/' + str(i), len(value), ','.join(value))
+                indexes = result[key]
+
+                # Ustvarimo snippets
+                snippet_indexes = [i for i, x in enumerate(text_lower) if x == key]
+                snippets = []
+                for snippet_i in snippet_indexes:
+                    snippet = ""
+
+                    num_words = 0
+                    i_back = 1
+                    # vzamemo 3 prejsnje besede, ne gremo dlje od 5 besed nazaj in pazimo da ne gremo out of bounds
+                    while num_words < 3 and i_back <= 5 and snippet_i - i_back >= 0:
+                        if text[snippet_i - i_back].isalnum():
+                            num_words += 1
+                        snippet = text[snippet_i - i_back] + " " + snippet
+                        i_back += 1
+
+                    snippet += text[snippet_i]
+
+                    num_words = 0
+                    i_forward = 1
+                    while num_words < 3 and i_forward <= 5 and snippet_i + i_forward < len(text):
+                        if text[snippet_i + i_forward].isalnum():
+                            num_words += 1
+                        snippet = snippet + " " + text[snippet_i + i_forward]
+                        i_forward += 1
+
+                    snippets.append(snippet)
+
+                snippets_str = ' ... '.join(snippets)
+                if not snippet_indexes == [] and snippet_indexes[0] > 4:
+                    snippets_str = '... ' + snippets_str
+                if not snippet_indexes == [] and snippet_indexes[len(snippet_indexes) - 1] < len(text) - 4:
+                    snippets_str = snippets_str + '... '
+
+                indexes = [str(x) for x in indexes]
+                insert_in_db(key, str(folder) + '/' + str(i), len(indexes), ','.join(indexes), snippets_str)
 
     progress.close()
 
