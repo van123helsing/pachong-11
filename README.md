@@ -7,6 +7,7 @@ Note: code was developed in python version 3.6.2
 1. In ./implementation-indexing directory run command `python run-data-process.py`
 
 ## RUN search
+Search string is hardcoded. To change it comment the current one and uncomment the one you want to use.
 1. For BASIC search in ./implementation-indexing directory run command `python run-basic-search.py`
 1. For SQLITE search in ./implementation-indexing directory run command `python run-sqlite-search.py`
 
