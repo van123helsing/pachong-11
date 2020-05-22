@@ -1,6 +1,7 @@
 import sqlite3
 from tabulate import tabulate
 import hashlib
+import time
 
 conn = sqlite3.connect('inverted-index.db')
 
@@ -36,15 +37,17 @@ def select_from_db(word):
 
 
 def main():
-    search_term = "Sistem SPOT"
+    # search_term = "Sistem SPOT"
     # search_term = "predelovalne dejavnosti"
     # search_term = "trgovina"
     # search_term = "social services"
     # search_term = "ministrstvo za zdravje"
     # search_term = "republika slovenija"
-    # search_term = "računalništvo in informatika"
+    search_term = "računalništvo in informatika"
     print("Začenjam iskanje pojavitev: " + search_term)
+    start_time = time.time()
     search(search_term)
+    print("--- %s seconds ---" % (time.time() - start_time))
     print("\nKončano!")
 
 
